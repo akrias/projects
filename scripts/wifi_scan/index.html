@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+	<meta charset="utf-8">   
+	<style>
+		body { 
+			font: 12px Arial;
+		}
+		
+		path {
+			stroke: steelblue;
+			stroke-width: 2;
+			fill: none;
+		}
+		
+		.axis path,
+		.axis line {
+			fill: none;
+			stroke: grey;
+			stroke-width: 1;
+			shape-rendering: crispEdges;
+		}
+		
+		table { 
+			font: 12px Arial;
+			cell-spacing: 0;
+			font-style: normal;
+			border-collapse: collapse;
+			border: 1px solid black;
+			empty-cells: show;
+		}
+		
+		th {
+			text-align: center;
+			width: 212px;
+			border: 1px solid Navy;
+			background-color: Silver;
+		}
+		
+		td {
+			text-align: center;
+			width: 212px;
+			height: 20px;
+			color: green;
+			border: 1px solid Navy;
+			empty-cells: show;
+		}
+		
+	</style>
+	<div id="main-wrapper">
+		<div id="content">
+			<h1>Network Signal Strength of Access Points</h1>
+			<div id="blurb">
+				<div id="default-blurb">
+					<table>
+						<tr>
+							<th>Mac Address</th>
+							<th>ESSID</th>
+							<th>Frequency</th>
+							<th>Channel</th>
+							<th>Encryption</th>
+						</tr>
+						<tr>
+							<td id = "id1"> &nbsp </td>
+						    <td id = "id2"> &nbsp </td>
+				  		 	<td id = "id3"> &nbsp </td>
+							<td id = "id4"> &nbsp </td>	
+							<td id = "id5"> &nbsp </td>
+						</tr>
+					</table>
+				</div>	
+			</div>
+		</div>
+	</div>
+	
+	<div id="option">
+    	<input name="updateButton" 
+           type="button" 
+           value="Update" 
+           onclick="updateData()" 
+    	/>
+	</div>
+	<body>
+		<!-- load d3.js lib -->
+		<script type="text/javascript" src="d3/d3.v3.js"></script>
+		
+		<script type="text/javascript" src="wifi.js"></script>
+	</body>
+</html>
