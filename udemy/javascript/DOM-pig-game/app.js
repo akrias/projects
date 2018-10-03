@@ -49,15 +49,15 @@ document.querySelector('.btn-roll').addEventListener('click', function() {
         document.getElementById('dice-2').src = 'dice-' + dice2 + '.png'; 
         
         // if player rolls 6 twice in a row, reset current and global score
-        if(dice1 === 6 && prevRoll === 6) {
+        if((dice1 === 6 && prevRoll === 6) || (dice2 === 6 && prevRoll === 6)) {
             scores[activePlayer] = 0;
             document.querySelector('#score-' + activePlayer).textContent = '0';
             nextPlayer();
         }
         // update round score if rolled # is not 1    
-        if(dice1 !== 1) {
+        if(dice1 !== 1 && dice2 !== 1) {
             //add score
-            currentScore += dice1;
+            currentScore += dice1 + dice2;
             document.querySelector('#current-' + activePlayer).textContent = currentScore;                    
         }
         
@@ -96,7 +96,7 @@ document.querySelector('.btn-hold').addEventListener('click', function() {
         }
         
         if(scores[activePlayer] >= winScore) {
-            document.querySelector('#name-' + activePlayer).textContent = "WINNER BOIS";
+            document.querySelector('#name-' + activePlayer).textContent = "WINNER!";
             document.querySelector('dice-1').style.display = 'none';
             document.querySelector('dice-2').style.display = 'none';
             document.querySelector('.player-' + activePlayer + '-panel').classList.add('winner');
