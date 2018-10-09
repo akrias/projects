@@ -65,52 +65,52 @@ body {
     background-color: beige;
 }
 
-#d1 {
+#d0 {
     top: 25%;
     left: 15%;
+}
+
+#d1 {
+    top: 25%;
+    left: 32.5%;
 }
 
 #d2 {
     top: 25%;
-    left: 32.5%;
+    left: 50%;
 }
 
 #d3 {
     top: 25%;
-    left: 50%;
+    left: 67.5%;
 }
 
 #d4 {
     top: 25%;
-    left: 67.5%;
-}
-
-#d5 {
-    top: 25%;
     left: 85%;
 }
 
-#p1 {
+#p0 {
     top: 25%;
     left: 15%;
 }
 
-#p2 {
+#p1 {
     top: 25%;
     left: 32.5%;
 }
 
-#p3 {
+#p2 {
     top: 25%;
     left: 50%;
 }
 
-#p4 {
+#p3 {
     top: 25%;
     left: 67.5%;
 }
 
-#p5 {
+#p4 {
     top: 25%;
     left: 85%;
 }
