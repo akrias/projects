@@ -1,16 +1,6 @@
 /*eslint-env browser*/
 /* eslint-env node, mocha */
 
-var scores;
-var playerScore, dealerScore;
-var activePlayer;
-
-var gamePlaying = true;
-var cardValue;
-
-//var suits = ['hearts', 'diamonds', 'spades', 'clubs'];
-//var ranks = ('ace', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'jack', 'queen', 'king');
-var values = {'ace':11, '2':2, '3':3, '4':4, '5':5, '6':6, '7':7, '8':8, '9':9, '10':10, 'jack':10, 'queen':10, 'king':10};
 
 class Card {
     constructor(suit, rank) {
@@ -109,6 +99,14 @@ class Hand {
             self.aces += 1;
         }
     }
+    
+    
+    adjustAce() {
+        while(this.aces && this.value > 21) {
+            self.value = self.value - 10;
+            self.aces = self.aces - 1;
+        }
+    }
 }
 
 
@@ -132,7 +130,12 @@ class Chips {
 
 
 
-
+function hit(deck, hand) {
+    let card = new Card();
+    card = deck.dealCard();
+    hand.addCard(card);
+    hand.adjustAce();
+}
 
 
 
@@ -140,68 +143,127 @@ class Chips {
 
 
 
-let deck = new Deck();
-deck.shuffleDeck();
-//console.log(deck.printDeck());
+var scores;
+var playerScore, dealerScore;
+var activePlayer;
 
+var gamePlaying = true;
+var cardValue;
+
+var index, i;
+
+//var suits = ['hearts', 'diamonds', 'spades', 'clubs'];
+//var ranks = ('ace', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'jack', 'queen', 'king');
+var values = {'ace':11, '2':2, '3':3, '4':4, '5':5, '6':6, '7':7, '8':8, '9':9, '10':10, 'jack':10, 'queen':10, 'king':10};
+
+init();
+
+document.getElementById("btn-hit").disabled = true;
+document.getElementById("btn-stand").disabled = true;
+
+
+
+let deck = new Deck();
 let player = new Hand();
 let dealer = new Hand();
 
 
-//console.log(deck.printDeck());
+function getDealerAsset(index) {
+    document.getElementById('d' + index).src = 'assets/' + dealer.cards[index].rank + '_of_' + dealer.cards[index].suit + '.png';
+}
 
-dealer.addCard(deck.dealCard());
-player.addCard(deck.dealCard());
-dealer.addCard(deck.dealCard());
-player.addCard(deck.dealCard());
+function getPlayerAsset(index) {
+    document.getElementById('p' + index).src = 'assets/' + player.cards[index].rank + '_of_' + player.cards[index].suit + '.png';
+}
 
-//console.log(player.cards);
-//console.log(dealer.cards);
+function addScore() {
+    document.getElementById('score-0').textContent = dealer.getValue();
+    document.getElementById('score-1').textContent = player.getValue();    
 
-console.log(player.getValue());
-console.log(dealer.getValue());
-
-
-
-
+}
 
 
 
 document.querySelector('.btn-new').addEventListener('click', function() {
-    
+    console.log("New game!");
     init();
+    index = 0;
+    i = 0;
     
-    var i;
+    document.getElementById('score-0').textContent = '0';
+    document.getElementById('score-1').textContent = '0';
     
-    // dealer reveal
-    for(i = 1; i < dealer.cards.length; i++) {
-        //console.log(dealer.cards[i].suit);
-        document.getElementById('d' + i).src = 'assets/' + dealer.cards[i].rank + '_of_' + dealer.cards[i].suit + '.png';
+    deck = new Deck();
+    deck.shuffleDeck();
+
+    player = new Hand();
+    dealer = new Hand();
+
+    dealer.addCard(deck.dealCard());
+    player.addCard(deck.dealCard());
+    dealer.addCard(deck.dealCard());
+    player.addCard(deck.dealCard());
+
+    //console.log(dealer.displayHand());
+    //console.log(player.displayHand());
+    
+    // enable buttons
+    document.getElementById("btn-hit").disabled = false;
+    document.getElementById("btn-stand").disabled = false;
+    
+    // display dealer card
+    for(var i = 1; i < dealer.cards.length; i++) {
+        getDealerAsset(i);
     }
     
-    for(i = 0; i < dealer.cards.length; i++) {
-        //console.log(dealer.cards[i].suit);
-        document.getElementById('p' + i).src = 'assets/' + dealer.cards[i].rank + '_of_' + dealer.cards[i].suit + '.png';
+    // display player hand
+    for(index = 0; index < dealer.cards.length; index++) {   
+        getPlayerAsset(index);
     }
+    
+    // display total score
+    addScore();
+    
+    console.log(dealer.displayHand());
+    console.log(player.displayHand());
     
 });
 
 document.querySelector('.btn-hit').addEventListener('click', function() {
+    // both player draws
+    hit(deck, dealer);
+    hit(deck, player);
+
+    console.log(dealer.displayHand());
+    console.log(player.displayHand());
+
+    // displays next set of cards
+    document.getElementById('d' + index).style.display = 'block';
+    document.getElementById('p' + index).style.display = 'block';
+    getDealerAsset(index);
+    getPlayerAsset(index);
+    
+    addScore();
+    
+    index += 1;
+        
+    if(index === 5) {
+        document.getElementById("btn-stand").disabled = true;
+        document.getElementById("btn-hit").disabled = true;
+    }
+    
     
 });
 
 document.querySelector('.btn-stand').addEventListener('click', function() {
-    
+    console.log("you stand on me!");
 });
 
 
 
 function init() {
     var i;
-    var dealerCard, playerCard;
     for(i = 0; i < 5; i++) {
-        dealerCard = "d" + i;
-        playerCard = "p" + i;
         document.getElementById("d" + i).style.display = 'none';
         document.getElementById("p" + i).style.display = 'none';
     }
@@ -221,10 +283,3 @@ function init() {
     
     
 }
-    
-
-
-
-
-
-init();
