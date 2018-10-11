@@ -95,16 +95,18 @@ class Hand {
         
         this.cards.push(card);
         this.value += values[card.rank]; //sum value of each card
+        
         if(card.rank === 'ace') {
-            self.aces += 1;
-        }
+            this.aces += 1;
+            console.log(this.aces);
+        }        
     }
     
     
     adjustAce() {
         while(this.aces && this.value > 21) {
-            self.value = self.value - 10;
-            self.aces = self.aces - 1;
+            this.value = this.value - 10;
+            this.aces = this.aces - 1;
         }
     }
 }
@@ -185,7 +187,7 @@ function addScore() {
 
 
 document.querySelector('.btn-new').addEventListener('click', function() {
-    console.log("New game!");
+    
     init();
     index = 0;
     i = 0;
@@ -203,9 +205,6 @@ document.querySelector('.btn-new').addEventListener('click', function() {
     player.addCard(deck.dealCard());
     dealer.addCard(deck.dealCard());
     player.addCard(deck.dealCard());
-
-    //console.log(dealer.displayHand());
-    //console.log(player.displayHand());
     
     // enable buttons
     document.getElementById("btn-hit").disabled = false;
@@ -224,8 +223,8 @@ document.querySelector('.btn-new').addEventListener('click', function() {
     // display total score
     addScore();
     
-    console.log(dealer.displayHand());
-    console.log(player.displayHand());
+    //console.log(dealer.displayHand());
+    //console.log(player.displayHand());
     
 });
 
@@ -234,7 +233,7 @@ document.querySelector('.btn-hit').addEventListener('click', function() {
     hit(deck, dealer);
     hit(deck, player);
 
-    console.log(dealer.displayHand());
+    //console.log(dealer.displayHand());
     console.log(player.displayHand());
 
     // displays next set of cards
