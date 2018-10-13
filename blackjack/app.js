@@ -91,14 +91,12 @@ class Hand {
         return handOrder;
     }
     
-    addCard(card) {
-        
+    addCard(card) {        
         this.cards.push(card);
         this.value += values[card.rank]; //sum value of each card
         
         if(card.rank === 'ace') {
             this.aces += 1;
-            console.log(this.aces);
         }        
     }
     
@@ -130,13 +128,44 @@ class Chips {
 
 
 
-
-
 function hit(deck, hand) {
     let card = new Card();
     card = deck.dealCard();
     hand.addCard(card);
     hand.adjustAce();
+}
+
+
+function getDealerAsset(index) {
+    document.getElementById('d' + index).src = 'assets/' + dealer.cards[index].rank + '_of_' + dealer.cards[index].suit + '.png';
+}
+
+function getPlayerAsset(index) {
+    document.getElementById('p' + index).src = 'assets/' + player.cards[index].rank + '_of_' + player.cards[index].suit + '.png';
+}
+
+function disableButtons() {
+    document.getElementById("btn-hit").disabled = true;
+    document.getElementById("btn-stand").disabled = true;
+}
+
+
+function playerBust() {
+    document.getElementById('name-1').textContent = "You lose";
+    document.querySelector('.player-1-panel').classList.toggle('active');
+    disableButtons();
+}
+
+function playerWin() {
+    document.getElementById('name-1').textContent = "You win!";
+    document.querySelector('.player-1-panel').classList.toggle('active');
+    disableButtons();
+}
+
+function push() {
+    document.getElementById('name-1').textContent = "Tie";
+    document.querySelector('.player-1-panel').classList.toggle('active');
+    disableButtons();
 }
 
 
@@ -152,7 +181,7 @@ var activePlayer;
 var gamePlaying = true;
 var cardValue;
 
-var index, i;
+var pIndex, dIndex, i;
 
 //var suits = ['hearts', 'diamonds', 'spades', 'clubs'];
 //var ranks = ('ace', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'jack', 'queen', 'king');
@@ -160,47 +189,35 @@ var values = {'ace':11, '2':2, '3':3, '4':4, '5':5, '6':6, '7':7, '8':8, '9':9, 
 
 init();
 
+// disable hit and stand button until new game is pressed
 document.getElementById("btn-hit").disabled = true;
 document.getElementById("btn-stand").disabled = true;
-
-
 
 let deck = new Deck();
 let player = new Hand();
 let dealer = new Hand();
 
 
-function getDealerAsset(index) {
-    document.getElementById('d' + index).src = 'assets/' + dealer.cards[index].rank + '_of_' + dealer.cards[index].suit + '.png';
-}
-
-function getPlayerAsset(index) {
-    document.getElementById('p' + index).src = 'assets/' + player.cards[index].rank + '_of_' + player.cards[index].suit + '.png';
-}
-
-function addScore() {
-    document.getElementById('score-0').textContent = dealer.getValue();
-    document.getElementById('score-1').textContent = player.getValue();    
-
-}
-
-
-
 document.querySelector('.btn-new').addEventListener('click', function() {
     
     init();
-    index = 0;
-    i = 0;
+    dIndex = 1;
+    pIndex = 0;
     
-    document.getElementById('score-0').textContent = '0';
+    document.querySelector('.player-1-panel').classList.remove('active');
+    
+    document.getElementById('score-0').textContent = '?';
     document.getElementById('score-1').textContent = '0';
+    
+    document.getElementById('name-1').textContent = 'Player';
     
     deck = new Deck();
     deck.shuffleDeck();
 
     player = new Hand();
     dealer = new Hand();
-
+    
+    // deal 2 cards to player and dealer
     dealer.addCard(deck.dealCard());
     player.addCard(deck.dealCard());
     dealer.addCard(deck.dealCard());
@@ -210,43 +227,42 @@ document.querySelector('.btn-new').addEventListener('click', function() {
     document.getElementById("btn-hit").disabled = false;
     document.getElementById("btn-stand").disabled = false;
     
-    // display dealer card
-    for(var i = 1; i < dealer.cards.length; i++) {
-        getDealerAsset(i);
-    }
+    // display dealer card    
+    getDealerAsset(dIndex);
+    dIndex++;
     
     // display player hand
-    for(index = 0; index < dealer.cards.length; index++) {   
-        getPlayerAsset(index);
+    for(pIndex = 0; pIndex < dealer.cards.length; pIndex++) {   
+        getPlayerAsset(pIndex);
     }
     
-    // display total score
-    addScore();
-    
-    //console.log(dealer.displayHand());
-    //console.log(player.displayHand());
-    
+    // display total score of player
+    document.getElementById('score-1').textContent = player.getValue();
+    //console.log(dealer.getValue());
+    console.log(dealer.displayHand());
 });
 
 document.querySelector('.btn-hit').addEventListener('click', function() {
-    // both player draws
-    hit(deck, dealer);
+    // player draws
     hit(deck, player);
 
-    //console.log(dealer.displayHand());
-    console.log(player.displayHand());
-
     // displays next set of cards
-    document.getElementById('d' + index).style.display = 'block';
-    document.getElementById('p' + index).style.display = 'block';
-    getDealerAsset(index);
-    getPlayerAsset(index);
+    document.getElementById('p' + pIndex).style.display = 'block';
+    getPlayerAsset(pIndex);
     
-    addScore();
+    // adds previous card value to current card value
+    document.getElementById('score-1').textContent = player.getValue();
     
-    index += 1;
-        
-    if(index === 5) {
+    // check if player busts
+    if(player.value > 21) {
+        playerBust();
+    }
+    
+    // increment to next card value for display
+    pIndex += 1;
+       
+    // caps total cards to 5
+    if(pIndex === 5) {
         document.getElementById("btn-stand").disabled = true;
         document.getElementById("btn-hit").disabled = true;
     }
@@ -255,7 +271,38 @@ document.querySelector('.btn-hit').addEventListener('click', function() {
 });
 
 document.querySelector('.btn-stand').addEventListener('click', function() {
-    console.log("you stand on me!");
+    // if player doesn't bust
+    if(player.value <= 21) {
+        // dealer will keep hitting until 17
+        while(dealer.value < 17) {
+            hit(deck, dealer);
+            document.getElementById('d' + dIndex).style.display = 'block';
+            getDealerAsset(dIndex);
+            document.getElementById('score-0').textContent = dealer.getValue();
+            console.log(dealer.displayHand());
+            dIndex++;
+        }
+        
+        document.getElementById('score-0').textContent = dealer.getValue();
+        
+        getDealerAsset(0);
+        // dealer busts
+        if(dealer.value > 21) {
+            playerWin();
+        }
+        // dealer greater than player
+        else if(dealer.value > player.value) {
+            playerBust();
+        }
+        
+        else if(player.value > dealer.value) {
+            playerWin();
+        }
+        
+        else {
+            push();
+        }
+    }
 });
 
 
