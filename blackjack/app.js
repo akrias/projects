@@ -106,16 +106,16 @@ class Hand {
 
 class Chips {
     constructor() {
-        self.total = 100;
-        self.bet = 0;
+        this.total = 100;
+        this.bet = 0;
     }
     
     winBet() {
-        self.total += self.bet;
+        this.total = parseFloat(this.total) + parseFloat(this.bet);
     }
     
     loseBet() {
-        self.total -= self.bet;
+        this.total = parseFloat(this.total) - parseFloat(this.bet);
     }
 }
 
@@ -126,7 +126,7 @@ function init() {
         document.getElementById("p" + i).style.display = 'none';
     }
     
-    document.getElementById('score-0').textContent = '0';
+    document.getElementById('score-0').textContent = '?';
     document.getElementById('score-1').textContent = '0';
     
     document.getElementById('d0').style.display = 'block';
@@ -158,17 +158,24 @@ function getPlayerAsset(index) {
 function disableButtons() {
     document.getElementById("btn-hit").disabled = true;
     document.getElementById("btn-stand").disabled = true;
+    
 }
 
 function playerBust() {
     document.getElementById('name-1').textContent = "You lose";
     document.querySelector('.player-1-panel').classList.toggle('active');
+    chips.loseBet();
+    document.getElementById('money-1').textContent = "$" + chips.total;
+    console.log(chips.total);
     disableButtons();
 }
 
 function playerWin() {
     document.getElementById('name-1').textContent = "You win!";
     document.querySelector('.player-1-panel').classList.toggle('active');
+    chips.winBet();
+    document.getElementById('money-1').textContent = "$" + chips.total;
+    console.log(chips.total);
     disableButtons();
 }
 
@@ -181,12 +188,14 @@ function push() {
 // ~~~~~~~~~~~~~~~~~~~~~~ MAIN ~~~~~~~~~~~~~~~~~~~~~~
 
 var pIndex, dIndex;
+var input;
 
 var values = {'ace':11, '2':2, '3':3, '4':4, '5':5, '6':6, '7':7, '8':8, '9':9, '10':10, 'jack':10, 'queen':10, 'king':10};
 
 let deck = new Deck();
 let player = new Hand();
 let dealer = new Hand();
+let chips = new Chips();
 
 init();
 
@@ -198,8 +207,12 @@ document.getElementById("btn-stand").disabled = true;
 
 document.querySelector('.btn-new').addEventListener('click', function() {
     init();
-    dIndex = 1;
-    pIndex = 0;
+    
+    deck = new Deck();
+    deck.shuffleDeck();
+    
+    player = new Hand();
+    dealer = new Hand();
     
     document.querySelector('.player-1-panel').classList.remove('active');
     
@@ -208,11 +221,13 @@ document.querySelector('.btn-new').addEventListener('click', function() {
     
     document.getElementById('name-1').textContent = 'Player';
     
-    deck = new Deck();
-    deck.shuffleDeck();
+    document.getElementById("btn-bet").disabled = false;
+    document.getElementById("form-control").disabled = false;
+});
 
-    player = new Hand();
-    dealer = new Hand();
+document.querySelector('.btn-bet').addEventListener('click', function() {
+    dIndex = 1;
+    pIndex = 0;
     
     // deal 2 cards to player and dealer
     dealer.addCard(deck.dealCard());
@@ -220,9 +235,10 @@ document.querySelector('.btn-new').addEventListener('click', function() {
     dealer.addCard(deck.dealCard());
     player.addCard(deck.dealCard());
     
-    // enable buttons
+    // enable buttons    
     document.getElementById("btn-hit").disabled = false;
     document.getElementById("btn-stand").disabled = false;
+    
     
     // display dealer card    
     getDealerAsset(dIndex);
@@ -235,6 +251,18 @@ document.querySelector('.btn-new').addEventListener('click', function() {
     
     // display score of player
     document.getElementById('score-1').textContent = player.getValue();
+    
+    
+    chips.bet = document.querySelector('.form-control').value;
+    
+    if(!chips.bet) {
+        chips.bet = 10;
+    }
+    
+    console.log(chips.bet);
+    
+    document.querySelector('.btn-bet').disabled = true;
+    document.querySelector('.form-control').disabled = true;
 });
 
 document.querySelector('.btn-hit').addEventListener('click', function() {

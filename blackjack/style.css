@@ -230,19 +230,49 @@ i {
     top: 30px;
 }
 
+.btn-bet {
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.form-control {
+    position: absolute; 
+    transform: translate(-50%, -50%);
+    top: 50%;
+    left: 60%;
+    color: #555;
+    font-size: 18px;
+    font-family: 'Lato';
+    text-align: center;
+    padding: 10px;
+    width: 140px;
+    text-transform: uppercase;
+}
+
+.bet-box > j {
+    position: absolute;
+    display: block;
+    transform: translate(0, -50%);
+    top: 50%;
+    left: 655px;
+    pointer-events: none;
+    width: 140px;
+    text-align: center;
+    
+}
+
 .btn-hit {
     top: 50%;
+    left: 75%;
     transform: translate(-50%, -50%);
     
 }
 
 .btn-stand {
     top: 50%;    
-    left: 900px;
+    left: 90%;
     transform: translate(-50%, -50%);
 }
-
-
 
 
 
